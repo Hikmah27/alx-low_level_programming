@@ -1,144 +1,142 @@
-#include<stdlib.h>
-#include<string.h>
 #include "main.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 /**
- * reverse - reverses a string
- * @s: pointer to string
- * @i: last index
- * Return: pointer to to s
+ *  _print - moves a string one place to the left and prints the string
+ *  @str: string to move
+ *  @l: size of string
+ *  Return: void
  */
-char *reverse(char *s, int i)
+void _print(char *str, int l)
 {
-	char ans;
-	int j = 0;
+int i, j;
 
-	for (j = 0; j < i; j++, i--)
-	{
-		ans = s[j];
-		s[j] = s[i];
-		s[i] = ans;
-	}
-	return (s);
+i = j = 0;
+while (i < l)
+{
+if (str[i] != '0')
+
+j = 1;
+if (j || i == l - 1)
+_putchar(str[i]);
+i++;
 }
-/**
- * _strlen - calculates string length
- * @s: pointer to string
- * Return: length of s
- */
-int _strlen(char *s)
-{
-	int i = 0;
-
-	while (s[i])
-		i++;
-	return (i);
+_putchar('\n');
+free(str);
 }
 
 /**
- * isnumber - checks if a string is a number
- * @s: pointer to string
- * Return: 1 if s is a number 0 otherwise
+ *  mul - multiplies a char with a string and places the answer into dest
+ *  @n: char to multiply
+ *  @num: string to multiply
+ *  @num_index: last non NULL index of num
+ *  @dest: destination of multiplication
+ *  @dest_index: highest index to start addition
+ *  Return: pointer to dest, or NULL on failure
  */
-int isnumber(char *s)
+char *mul(char n, char *num, int num_index, char *dest, int dest_index)
 {
-	int i = 0;
+int j, k, mul, mulrem, add, addrem;
 
-	while (s[i])
-	{
-		if (s[i] > 58 || s[i] < 48)
-			return (0);
-		i++;
-	}
-	return (1);
+mulrem = addrem = 0;
+for (j = num_index, k = dest_index; j >= 0; j--, k--)
+{
+mul = (n - '0') * (num[j] - '0') + mulrem;
+mulrem = mul / 10;
+add = (dest[k] - '0') + (mul % 10) + addrem;
+addrem = add / 10;
+dest[k] = add % 10 + '0';
+}
+for (addrem += mulrem; k >= 0 && addrem; k--)
+{
+add = (dest[k] - '0') + addrem;
+addrem = add / 10;
+dest[k] = add % 10 + '0';
+}
+if (addrem)
+{
+return (NULL);
+}
+return (dest);
+}
+/**
+* check_for_digits - checks the arguments to ensure they are digits
+* @av: pointer to arguments
+* Return: 0 if digits, 1 if not
+*/
+int check_for_digits(char **av)
+{
+int i, j;
+
+for (i = 1; i < 3; i++)
+{
+for (j = 0; av[i][j]; j++)
+{
+if (av[i][j] < '0' || av[i][j] > '9')
+return (1);
+}
+}
+return (0);
 }
 
 /**
- * mul2 - multiply two numbers
- * @s1: first number
- * @s2: second number
- * Return: pointer to result
+ * init - initializes a string
+ * @str: sting to initialize
+ * @l: length of strinf
+ * Return: void
  */
-char *mul2(char *s1, char *s2)
+void init(char *str, int l)
 {
-	int l1, l2, sum = 0, cry = 0, i,
-	    j, n1, n2, r1 = 0, r2 = 0;
-	char *res;
+int i;
 
-	if (!isnumber(s1) || !isnumber(s2))
-		return (NULL);
-	l1 = _strlen(s1);
-	l2 = _strlen(s2);
-	if ((l1 == 1 && s1[0] == '0') || (l2 == 1 && s2[0] == '0'))
-	{
-		res = malloc(2 * sizeof(char));
-		res[0] = '0', res[1] = '\0';
-		return (res);
-	}
-	res = malloc((l1 + l2) * sizeof(char));
-	if (res == NULL)
-		return (NULL);
-	for (i = 0; i < l1 + l2; i++)
-		res[i] = '0';
-	for (i = l1 - 1; i >= 0; i--)
-	{
-		n1 = s1[i] - '0';
-		r2 = 0;
-		cry = 0;
-		for (j = l2 - 1; j >= 0; j--)
-		{
-			n2 = s2[j] - '0';
-			sum = (n1 * n2) + res[r1 + r2] + cry - '0';
-			res[r1 + r2] = (sum % 10) + '0';
-			cry = sum / 10, r2++;
-		}
-		if (cry > 0)
-			res[r1 + r2] += cry;
-		r1++;
-	}
-	i = l1 + l2 - 1;
-	while (res[i] == '0' && i >= 0)
-		i--;
-	res[i + 1] = '\0';
-	return (reverse(res, i));
+for (i = 0; i < l; i++)
+str[i] = '0';
+str[i] = '\0';
 }
 
 /**
- * print - prints a string
- * @s: string to print
+ *  main - multiply two numbers
+ *  @argc: number of arguments
+ *  @argv: argument vector
+ *  Return: zero, or exit status of 98 if failure
  */
-void print(char *s)
+int main(int argc, char *argv[])
 {
-	int i = 0;
-
-	while (s[i])
-		_putchar(s[i++]);
-	_putchar('\n');
+int l1, l2, ln, ti, i;
+char *a;
+char *t;
+char e[] = "Error\n";
+if (argc != 3 || check_for_digits(argv))
+{
+for (ti = 0; e[ti]; ti++)
+_putchar(e[ti]);
+exit(98);
 }
-
-/**
- * main - entry point
- * @argc: argument count
- * @argv: arguments array
- * Return: 0 success 98 error
- */
-int main(int argc, char **argv)
+for (l1 = 0; argv[1][l1]; l1++)
+;
+for (l2 = 0; argv[2][l2]; l2++)
+;
+ln = l1 + l2 + 1;
+a = malloc(ln *sizeof(char));
+if (a == NULL)
 {
-	char *res;
-
-
-	if (argc != 3)
-	{
-		print("Error");
-		exit(98);
-	}
-	res = mul2(argv[1], argv[2]);
-	if (res == NULL)
-	{
-		print("Error");
-		exit(98);
-	}
-	print(res);
-	free(res);
-	return (0);
+for (ti = 0; e[ti]; ti++)
+_putchar(e[ti]);
+exit(98);
+}
+init(a, ln - 1);
+for (ti = l2 - 1, i = 0; ti >= 0; ti--, i++)
+{
+t = mul(argv[2][ti], argv[1], l1 - 1, a, (ln - 2) - i);
+if (t == NULL)
+{
+for (ti = 0; e[ti]; ti++)
+_putchar(e[ti]);
+free(a);
+exit(98);
+}
+}
+_print(a, ln - 1);
+return (0);
 }
