@@ -1,1 +1,1 @@
-this is my second C project
+This is a low level programming projects in alx
